@@ -14,10 +14,12 @@
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
     "@babel/node": "^7.10.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.10.3",
     "@babel/preset-env": "^7.10.2",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
-    "graphql-yoga": "^1.18.3"
+    "graphql-yoga": "^1.18.3",
+    "uuid": "^8.1.0"
   }
 }

@@ -1,4 +1,5 @@
 import { GraphQLServer } from "graphql-yoga";
+import { v4 as uuidv4 } from 'uuid';
 
 const users = [
     {
@@ -81,6 +82,12 @@ const typeDefs = `
         comments: [Comment]
     }
 
+    type Mutation {
+        createUser(name: String!, email: String!, age: Int) : User!
+        createPost(title: String!, body: String!, published: Boolean!, author: ID!) : Post!
+        createComment(text: String!, owner: ID!, post: ID!): Comment!
+    }
+
     type User {
         id : ID!
         name: String!
@@ -143,6 +150,67 @@ const resolvers = {
         } else {
             return 0
         }
+    }
+  },
+
+  Mutation: {
+    createUser: (parent, args, ctx, info) => {
+        let emailTaken = users.some((user) => user.email === args.email)
+
+        if(emailTaken) {
+            throw new Error("Email Taken")
+        }
+
+        const User = {
+            id: uuidv4(),
+            name: args.name,
+            email: args.email,
+            age: args.age
+        }
+
+        users.push(User)
+
+        return User
+    },
+    
+    createPost: (parent, args, ctx, info) => {
+        let userExists = users.some(user => user.id === args.author)
+
+        if(!userExists) {
+            throw new Error('User Cannot Find')
+        }
+
+        const Post = {
+            id: uuidv4(),
+            title: args.title,
+            body: args.body,
+            published: args.published,
+            author: args.author
+        }
+
+        posts.push(Post)
+        
+        return Post
+    }, 
+
+    createComment: (parent, args, ctx, info) => {
+        let userExists = users.some(user => user.id === args.owner)
+
+        let postExists = posts.some(post => args.post === post.id && post.published)
+
+        if(!userExists || !postExists) {
+            throw new Error('Unable to find post and user')
+        }
+
+        const Comment = {
+            id: uuidv4(),
+            text: args.text,
+            owner: args.owner,
+            post: args.post
+        }
+
+        comments.push(Comment)
+        return Comment       
     }
   },
 
