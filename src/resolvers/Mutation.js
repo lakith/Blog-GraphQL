@@ -19,6 +19,30 @@ const Mutation = {
         return User
     },
 
+    updateUser: (parent, args, {db}, info) => {
+        let user = db.users.find(user => user.id === args.id)
+
+        if(!user) {
+            throw new Error("User Not Found")
+        }
+
+        if(typeof args.data.email === "string") {
+            const emailTaken = db.users.some((user) =>user.email === args.data.email)
+            if(emailTaken) {
+                throw new Error("Email Taken")
+            }
+            user.email = args.data.email
+        }
+        if(typeof args.data.name === "string") {
+            user.name = args.data.name
+        }
+        if(typeof args.data.age !== 'undefined') {
+            user.age = args.data.age
+        }
+
+        return user
+    },
+
     deleteUser: (parent, args, {db}, info) => {
         const userIndex = db.users.findIndex(user => user.id === args.id)
 
@@ -55,7 +79,27 @@ const Mutation = {
         db.posts.push(Post)
         
         return Post
-    }, 
+    },
+
+    updatePost: (parent, args, {db}, info) => {
+        let post = db.posts.find(post => post.id === args.id)
+
+        if(!post) {
+            throw new Error("Post Not Found")
+        }
+
+        if(typeof args.data.title === "string") {
+            post.title = args.data.title
+        }
+        if(typeof args.data.body === "string") {
+            post.body = args.data.body
+        }
+        if(typeof args.data.published === "boolean") {
+            post.published = args.data.published
+        }
+
+        return post
+    },
 
     deletePost: (parent, args, {db}, info) => {
         let postIndex = db.posts.findIndex(post => post.id === args.id)
@@ -87,6 +131,16 @@ const Mutation = {
 
         db.comments.push(Comment)
         return Comment       
+    },
+
+    updateComment: (parent, args, {db}, info) => {
+        let comment = db.comments.find(comment => comment.id === args.id)
+        if(!comment) {
+            throw new Error("Comment Not Found")
+        }
+        comment.text = args.data.text
+
+        return comment
     },
 
     deleteComment: (parent, args, {db}, info) => {
