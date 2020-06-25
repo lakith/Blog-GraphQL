@@ -1,7 +1,7 @@
 {
   "name": "graphql-project",
   "version": "1.0.0",
-  "description": "",
+  "description": "this is a simple graphQL blog",
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/index.js --exec babel-node",
